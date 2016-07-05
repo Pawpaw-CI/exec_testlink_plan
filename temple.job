@@ -1,0 +1,13 @@
+{
+    "testdef_repos": [
+
+        {
+            "git-repo": "https://github.com/qiujieqiong/lava-test.git",
+            "testdef": "lava-test.yaml",
+            "minimal_tags": ["wifi-ar9485"]
+        }
+    ],
+    "stream": "/anonymous/test/",
+    "timeout": 18000,
+    "name": "run-testlink-plan"
+}
