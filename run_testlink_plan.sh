@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source params.env
-
 function check_exit()
 {
     if [[ $1 != 0 ]]; then
@@ -9,7 +7,9 @@ function check_exit()
     fi
 }
 
-find -type f | grep \.json$ | xargs rm
+source params.env
+check_exit $?
+find . -name "*.json" -exec rm {} \;
 
 python3 get-testplan-info.py
 check_exit $?
