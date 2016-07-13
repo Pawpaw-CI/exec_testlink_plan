@@ -2,8 +2,6 @@
 # coding=utf-8
 
 import os
-import sys
-import string
 import xmlrpc.client
 
 TESTPLANID = os.getenv("TESTPLAN_ID")
@@ -56,11 +54,16 @@ class TestlinkAPIClient:
         return self.server.tl.addTestCaseToTestPlan(dictargs)
 
 # substitute your Dev Key Here
-client = TestlinkAPIClient("05742a441efd68af4062f2a7b12d7547")
+client = TestlinkAPIClient(TESTLINKAPIKEY)
+
+platform_docker = '1'
+platform_desktop = '2'
 
 def getAllTestCaseID(execution_type=2):  # execution_type 1:手动　2:自动
     args = {}
-    allid = []
+    allid = {}
+    docker_id = []
+    lava_id = []
     args["testplanid"] = TESTPLANID
     plantestcases = client.getTestCaseForTestPlan(args)
     if 2 == execution_type:
@@ -71,20 +74,35 @@ def getAllTestCaseID(execution_type=2):  # execution_type 1:手动　2:自动
         printline()
 
     for k in sorted(plantestcases.keys()):
-        if plantestcases[k][0]['execution_type'] == str(execution_type):
-            allid.append(plantestcases[k][0]['tcase_id'])
-            print(plantestcases[k][0]['tcase_id'] + " : " + str(plantestcases[k][0]['tcase_name']))
+        if type(plantestcases[k]) == list:
+            if plantestcases[k][0]['execution_type'] == str(execution_type) and plantestcases[k][0]["platform_id"] == platform_docker:
+                docker_id.append(str(plantestcases[k][0]['tcase_id']))
+                print(plantestcases[k][0]['tcase_id'] + " : " + str(plantestcases[k][0]['tcase_name']))
+
+            if plantestcases[k][0]['execution_type'] == str(execution_type) and plantestcases[k][0]["platform_id"] == platform_desktop:
+                lava_id.append(plantestcases[k][0]['tcase_id'])
+                print(plantestcases[k][0]['tcase_id'] + " : " + str(plantestcases[k][0]['tcase_name']))
+
+        if type(plantestcases[k]) == dict:
+            if platform_docker in plantestcases[k].keys() and str(execution_type) == plantestcases[k][platform_docker]:
+                docker_id.append(str(plantestcases[k][platform_docker]['tcase_id']))
+                print(plantestcases[k][platform_docker]['tcase_id'] + " : " + str(plantestcases[k][platform_docker]['tcase_name']))
+
+            if platform_desktop in plantestcases[k].keys() and str(execution_type) == plantestcases[k][platform_desktop]:
+                lava_id.append(plantestcases[k][platform_desktop]['tcase_id'])
+                print(plantestcases[k][platform_desktop]['tcase_id'] + " : " + str(plantestcases[k][platform_desktop]['tcase_name']))
 
     printline()
+    allid['docker_id'] = docker_id
+    allid['lava_id'] = ",".join(str(i) for i in lava_id)
 
     return allid
 
-plancaseid = getAllTestCaseID()
+caseid_dict = getAllTestCaseID()
 
 ffile = open(idfilename, 'w')
 try:
-    str_id = ",".join(str(i) for i in plancaseid)
-    print(str_id)
-    ffile.write(str_id)
+    print(caseid_dict)
+    ffile.write(caseid_dict)
 finally:
     ffile.close()

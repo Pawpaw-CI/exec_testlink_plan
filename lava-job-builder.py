@@ -221,19 +221,28 @@ if args.list_devices:
 jt = JobTemplate(dinfos, args.kernel,
                  args.ramdisk, args.nfsrootfs, args.submitter)
 
-case_id = open(args.idfile).read()
-#for f in args.job_file:
-#    jt.feed(f.read())
+allid = open(args.idfile).read()
+
+allidjson = json.loads(allid)
+docker_id = allidjson("docker_id")
+lava_id = allidjson("lava_id")
+
+docker_dict = {}
+docker_dict["version"] = "15.2"
+docker_dict["caseID"] = docker_id
+
+with open("%s/%s.json" % (args.output, "docker_id"), "w") as f:
+    f.write(json.dumps(docker_dict))
+
 f = open(args.templejson)
 jt.feed(f.read())
-
 
 if not os.path.exists(args.output):
     os.makedirs(args.output)
 
 for job in jt.generate():
     locate = job['actions'][2]['parameters']['testdef_repos'][0]
-    locate["parameters"] = {"CASE_ID": case_id}
+    locate["parameters"] = {"CASE_ID": lava_id}
     for key in locate.keys():
         print(key + "\t:\t" + str(locate[key]))
 

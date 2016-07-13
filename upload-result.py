@@ -3,11 +3,12 @@
 
 import os
 import sys
-import string
 import xmlrpc.client
 
 TESTPLANID = os.getenv("TESTPLAN_ID")
 BUILDNAME  = os.getenv("BUILDNAME_VERSION")
+SERVER_URL = os.getenv("SERVER_URL")
+TESTLINKAPIKEY = os.getenv("TESTLINKAPIKEY")
 if TESTPLANID == None or BUILDNAME == None:
     print("Please make sure you have export the TESTPLAN_ID")
     sys.exit(2)
@@ -18,11 +19,8 @@ else:
 resultname = "result.txt"
 
 class TestlinkAPIClient:
-    # substitute your server URL Here
-    SERVER_URL = "https://testlink.deepin.io/lib/api/xmlrpc/v1/xmlrpc.php"
-
     def __init__(self, devKey):
-        self.server = xmlrpc.client.ServerProxy(self.SERVER_URL)
+        self.server = xmlrpc.client.ServerProxy(SERVER_URL)
         self.devKey = devKey
 
     def getInfo(self):
@@ -56,7 +54,7 @@ class TestlinkAPIClient:
         return self.server.tl.reportTCResult(dictargs)
 
 # substitute your Dev Key Here
-client = TestlinkAPIClient("05742a441efd68af4062f2a7b12d7547")
+client = TestlinkAPIClient(TESTLINKAPIKEY)
 
 def getAllTestCaseID():
     args = {}
