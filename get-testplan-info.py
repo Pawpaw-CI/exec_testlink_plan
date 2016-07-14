@@ -2,6 +2,7 @@
 # coding=utf-8
 
 import os
+import json
 import xmlrpc.client
 
 TESTPLANID = os.getenv("TESTPLAN_ID")
@@ -84,15 +85,19 @@ def getAllTestCaseID(execution_type=2):  # execution_type 1:手动　2:自动
                 print(plantestcases[k][0]['tcase_id'] + " : " + str(plantestcases[k][0]['tcase_name']))
 
         if type(plantestcases[k]) == dict:
-            if platform_docker in plantestcases[k].keys() and str(execution_type) == plantestcases[k][platform_docker]:
+            if platform_docker in plantestcases[k].keys() and str(execution_type) == plantestcases[k][platform_docker]['execution_type']:
                 docker_id.append(str(plantestcases[k][platform_docker]['tcase_id']))
                 print(plantestcases[k][platform_docker]['tcase_id'] + " : " + str(plantestcases[k][platform_docker]['tcase_name']))
 
-            if platform_desktop in plantestcases[k].keys() and str(execution_type) == plantestcases[k][platform_desktop]:
+            if platform_desktop in plantestcases[k].keys() and str(execution_type) == plantestcases[k][platform_desktop]['execution_type']:
                 lava_id.append(plantestcases[k][platform_desktop]['tcase_id'])
                 print(plantestcases[k][platform_desktop]['tcase_id'] + " : " + str(plantestcases[k][platform_desktop]['tcase_name']))
 
     printline()
+    print("docker_id "),
+    print(docker_id)
+    print("lava_id: ")
+    print(lava_id)
     allid['docker_id'] = docker_id
     allid['lava_id'] = ",".join(str(i) for i in lava_id)
 
@@ -103,6 +108,6 @@ caseid_dict = getAllTestCaseID()
 ffile = open(idfilename, 'w')
 try:
     print(caseid_dict)
-    ffile.write(caseid_dict)
+    ffile.write(json.dumps(caseid_dict))
 finally:
     ffile.close()

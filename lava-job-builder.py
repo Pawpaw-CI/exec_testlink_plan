@@ -224,8 +224,8 @@ jt = JobTemplate(dinfos, args.kernel,
 allid = open(args.idfile).read()
 
 allidjson = json.loads(allid)
-docker_id = allidjson("docker_id")
-lava_id = allidjson("lava_id")
+docker_id = allidjson["docker_id"]
+lava_id = allidjson["lava_id"]
 
 docker_dict = {}
 docker_dict["version"] = "15.2"
@@ -250,5 +250,3 @@ for job in jt.generate():
 
     with open("%s/%s.json" % (args.output, job["job_name"]), "w") as f:
         f.write(json.dumps(job))
-
-os.remove(args.idfile)

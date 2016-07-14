@@ -89,13 +89,13 @@ def download_attach(server, id):
         if attach['pathname'] == 'test.result':
             content = base64.b64decode(attach['content']).decode('utf-8')
             print(content)
-            f = open('result.txt', 'w')
+            f = open('lava_result.txt', 'w')
             f.write(content)
             f.close()
             break
 
 
-def main():
+def thd_lava():
     parser = argparse.ArgumentParser(
         description="Submit lava job and output the result"
     )
@@ -117,7 +117,6 @@ def main():
 
     if id == 0:
         print("Failed submit job {}".format(job_content))
-        exit(-1)
 
     print("Submit job to https://{}/scheduler/job/{}".format(args.host, id))
 
@@ -126,7 +125,21 @@ def main():
     if not show_bundle(sched, id):
         print(
             "Running failed, see https://{}/scheduler/job/{}".format(args.host, id))
-        exit(-1)
     download_attach(server, id)
 
-main()
+def thd_docker(idfile="output/docker_id.json"):
+    print(idfile)
+    return None
+
+thtsk = []
+
+threaddocker = threading.Thread(target=thd_docker)
+threaddocker.start()
+thtsk.append(threaddocker)
+
+threadlava = threading.Thread(target=thd_lava)
+threadlava.start()
+thtsk.append(threadlava)
+
+for thd in thtsk:
+    thd.join()

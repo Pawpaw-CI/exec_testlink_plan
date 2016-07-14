@@ -16,7 +16,7 @@ else:
     print("TESTPLAN_ID : %s" % TESTPLANID)
     print('-' * 80)
 
-resultname = "result.txt"
+resultname = "lava_result.txt"
 
 class TestlinkAPIClient:
     def __init__(self, devKey):
@@ -69,15 +69,19 @@ def getAllTestCaseID():
 
     return allid
 
-def reportToTestlink(case_id, case_status):
+def reportToTestlink(case_id, case_status, platform_id):
     args = {}
     args["testplanid"] = TESTPLANID
     args["testcaseid"] = case_id
+    args["platformid"] = platform_id
     # args["buildname"] = "new version"
     args["buildname"] = BUILDNAME
     args["status"] = case_status
     result = client.reportToTestlink(args)
     print(result)
+
+platform_docker_id = 1
+platform_desktop_id = 2
 
 ffile = open(resultname, 'r')
 try:
@@ -88,7 +92,6 @@ try:
             break
         tc_id, tc_result = line.split()
         print(tc_id + " : " + tc_result)
-        reportToTestlink(int(tc_id), tc_result[0].lower())
+        reportToTestlink(int(tc_id), tc_result[0].lower(), platform_desktop_id)
 finally:
     ffile.close()
-    os.remove(resultname)
