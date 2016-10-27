@@ -76,11 +76,11 @@ def getAllTestCaseID(execution_type=2):  # execution_type 1:手动　2:自动
 
     for k in sorted(plantestcases.keys()):
         if type(plantestcases[k]) == list:
-            if plantestcases[k][0]['execution_type'] == str(execution_type) and plantestcases[k][0]["platform_id"] == platform_docker:
+            if plantestcases[k][0]['execution_type'] == str(execution_type):
                 docker_id.append(str(plantestcases[k][0]['tcase_id']))
                 print(plantestcases[k][0]['tcase_id'] + " : " + str(plantestcases[k][0]['tcase_name']))
 
-            if plantestcases[k][0]['execution_type'] == str(execution_type) and plantestcases[k][0]["platform_id"] == platform_desktop:
+            if plantestcases[k][0]['execution_type'] == str(execution_type):
                 lava_id.append(plantestcases[k][0]['tcase_id'])
                 print(plantestcases[k][0]['tcase_id'] + " : " + str(plantestcases[k][0]['tcase_name']))
 

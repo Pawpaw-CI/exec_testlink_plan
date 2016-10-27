@@ -2,8 +2,11 @@
     "testdef_repos": [
 
         {
-            "git-repo": "https://github.com/qiujieqiong/lava-test.git",
-            "testdef": "lava-test.yaml",
+            "git-repo": "https://github.com/wangyingtaodeepin/lava-autologin.git",
+            "testdef": "dde-launch-end.yaml",
+            "parameters": {
+                "AUTO_LOGIN_USER": "deepin"
+            },
             "minimal_tags": ["wifi-ar9485"]
         }
     ],
