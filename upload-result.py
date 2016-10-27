@@ -73,7 +73,7 @@ def reportToTestlink(case_id, case_status, platform_id):
     args = {}
     args["testplanid"] = TESTPLANID
     args["testcaseid"] = case_id
-    args["platformid"] = platform_id
+    # args["platformid"] = platform_id
     # args["buildname"] = "new version"
     args["buildname"] = BUILDNAME
     args["status"] = case_status
