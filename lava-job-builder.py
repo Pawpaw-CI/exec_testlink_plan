@@ -242,7 +242,7 @@ if not os.path.exists(args.output):
 
 for job in jt.generate():
     locate = job['actions'][2]['parameters']['testdef_repos'][0]
-    locate["parameters"] = {"CASE_ID": lava_id}
+    locate["parameters"] = {"CASE_ID": lava_id, "AUTO_LOGIN_USER": "deepin"}
     for key in locate.keys():
         print(key + "\t:\t" + str(locate[key]))
 
