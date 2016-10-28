@@ -88,10 +88,19 @@ try:
     #result_content = ffile.read()
     while 1:
         line = ffile.readline()
+
         if not line:
             break
-        tc_id, tc_result = line.split()
+        tc_id, tc_result = line.strip('\n').split()
         print(tc_id + " : " + tc_result)
+
+        upload_result = ''
+
+        if 'True' == tc_result:
+            tc_result = 'Pass'
+        else:
+            tc_result = 'Fail'
+
         reportToTestlink(int(tc_id), tc_result[0].lower(), platform_desktop_id)
 finally:
     ffile.close()
