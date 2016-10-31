@@ -3,20 +3,33 @@
 
 import os
 import sys
+import requests
 import xmlrpc.client
 
-TESTPLANID = os.getenv("TESTPLAN_ID")
-BUILDNAME  = os.getenv("BUILDNAME_VERSION")
-SERVER_URL = os.getenv("SERVER_URL")
-TESTLINKAPIKEY = os.getenv("TESTLINKAPIKEY")
-if TESTPLANID == None or BUILDNAME == None:
-    print("Please make sure you have export the TESTPLAN_ID")
-    sys.exit(2)
-else:
-    print("TESTPLAN_ID : %s" % TESTPLANID)
-    print('-' * 80)
+TESTPLANID = os.getenv("TESTPLAN_ID") or None
+BUILDNAME  = os.getenv("BUILD_ID") or None
+SERVER_URL = os.getenv("SERVER_URL") or None
+TESTLINKAPIKEY = os.getenv("TESTLINKAPIKEY") or None
 
 resultname = "lava_result.txt"
+
+def get_review_info(id = None):
+    if None == id or None == host or None == rr_token:
+        return (None, None)
+
+    url_review = "/".join((host, review_path, review_id))
+    data_response = requests.get((url_review, headers = headers)
+    jsondata = json.loads(data_response.text)
+
+    plan_id = None
+    build_id = None
+    try:
+        plan_id = jsondata["result"]["tl_test_plan_id"]
+        build_id = jsondata["result"]["tl_build_id"]
+        return (plan_id, build_id)
+    except Exception:
+        print("Got keyError Exception jsondata")
+        return (None, None)
 
 class TestlinkAPIClient:
     def __init__(self, devKey):
@@ -75,10 +88,28 @@ def reportToTestlink(case_id, case_status, platform_id):
     args["testcaseid"] = case_id
     # args["platformid"] = platform_id
     # args["buildname"] = "new version"
-    args["buildname"] = BUILDNAME
+    # args["buildname"] = BUILDNAME
+    args["buildid"] = BUILD_ID
     args["status"] = case_status
     result = client.reportToTestlink(args)
     print(result)
+
+rr_token = os.getenv("RR_TOKEN") or None
+headers = {"Access-Token": rr_token}
+
+host        = os.getenv("HOST_API") or None
+review_id   = os.getenv("REVIEW_ID") or None
+review_path = "review"
+
+if TESTPLANID == None or BUILD_ID == None:
+    (plan_id, build_id) = get_review_info(review_id)
+    TESTPLANID = plan_id
+    BUILD_ID = build_id
+    print("Please make sure you have export the TESTPLAN_ID")
+    sys.exit(2)
+else:
+    print("TESTPLAN_ID : %s" % TESTPLANID)
+    print('-' * 80)
 
 platform_docker_id = 1
 platform_desktop_id = 2
