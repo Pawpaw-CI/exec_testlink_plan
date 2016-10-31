@@ -34,7 +34,7 @@ def get_review_info(id = None):
     plan_id = None
     build_id = None
     try:
-        plan_id = jsondata["result"]["tl_test_plan_id"]
+        plan_id  = jsondata["result"]["tl_test_plan_id"]
         build_id = jsondata["result"]["tl_build_id"]
         return (plan_id, build_id)
     except Exception:
@@ -78,7 +78,7 @@ client = TestlinkAPIClient(TESTLINKAPIKEY)
 if None == TESTPLANID or None == BUILDID:
     (plan_id, build_id) = get_review_info(review_id)
     TESTPLANID = plan_id
-    BUILD_ID = build_id
+    BUILDID = build_id
 
     print("TESTPLAN_ID : %s\n" % TESTPLANID)
     print("BUILD_ID : %s\n" % BUILDID)
