@@ -20,14 +20,6 @@ review_path = "review"
 def printline():
     print('-' * 80)
 
-if TESTPLANID == None or SERVER_URL == None or TESTLINKAPIKEY == None:
-    print("Please make sure you have export the parameters.")
-    exit(1)
-else:
-    print("TESTPLAN_ID : %s\n" % TESTPLANID)
-    print("BUILD_ID : %s\n" % BUILDID)
-    printline()
-
 idfilename = "id.txt"
 
 def get_review_info(id = None):
@@ -82,6 +74,15 @@ class TestlinkAPIClient:
 # substitute your Dev Key Here
 client = TestlinkAPIClient(TESTLINKAPIKEY)
 
+if None == TESTPLANID or None == BUILD_ID:
+    (plan_id, build_id) = get_review_info(review_id)
+    TESTPLANID = plan_id
+    BUILD_ID = build_id
+
+    print("TESTPLAN_ID : %s\n" % TESTPLANID)
+    print("BUILD_ID : %s\n" % BUILDID)
+    printline()
+
 platform_docker = '1'
 platform_desktop = '2'
 
@@ -90,11 +91,7 @@ def getAllTestCaseID(execution_type=2):  # execution_type 1:手动　2:自动
     allid = {}
     docker_id = []
     lava_id = []
-    if None != TESTPLANID:
-        args["testplanid"] = TESTPLANID
-    else:
-        (plan_id, build_id) = get_review_info(review_id)
-        args["testplanid"] = plan_id
+    args["testplanid"] = TESTPLANID
 
     plantestcases = client.getTestCaseForTestPlan(args)
     if 2 == execution_type:

@@ -7,7 +7,7 @@ import requests
 import xmlrpc.client
 
 TESTPLANID = os.getenv("TESTPLAN_ID") or None
-BUILDNAME  = os.getenv("BUILD_ID") or None
+BUILDID    = os.getenv("BUILD_ID") or None
 SERVER_URL = os.getenv("SERVER_URL") or None
 TESTLINKAPIKEY = os.getenv("TESTLINKAPIKEY") or None
 
@@ -89,7 +89,7 @@ def reportToTestlink(case_id, case_status, platform_id):
     # args["platformid"] = platform_id
     # args["buildname"] = "new version"
     # args["buildname"] = BUILDNAME
-    args["buildid"] = BUILD_ID
+    args["buildid"] = BUILDID
     args["status"] = case_status
     result = client.reportToTestlink(args)
     print(result)
@@ -104,11 +104,10 @@ review_path = "review"
 if TESTPLANID == None or BUILD_ID == None:
     (plan_id, build_id) = get_review_info(review_id)
     TESTPLANID = plan_id
-    BUILD_ID = build_id
-    print("Please make sure you have export the TESTPLAN_ID")
-    sys.exit(2)
-else:
+    BUILDID = build_id
+
     print("TESTPLAN_ID : %s" % TESTPLANID)
+    print("BUILDID : %s" % BUILDID)
     print('-' * 80)
 
 platform_docker_id = 1
