@@ -2,6 +2,7 @@
 # coding=utf-8
 
 import os
+import sys
 import json
 import requests
 import xmlrpc.client
@@ -131,6 +132,10 @@ def getAllTestCaseID(execution_type=2):  # execution_type 1:手动　2:自动
     return allid
 
 caseid_dict = getAllTestCaseID()
+
+if 0 == len(caseid_dict["lava_id"]):
+    print("lave_id list is 0.")
+    os.exit(1)
 
 ffile = open(idfilename, 'w')
 try:
