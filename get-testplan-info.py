@@ -3,12 +3,19 @@
 
 import os
 import json
+import requests
 import xmlrpc.client
 
-TESTPLANID = os.getenv("TESTPLAN_ID")
-BUILDID    = os.getenv("BUILD_ID")
-SERVER_URL = os.getenv("SERVER_URL")
-TESTLINKAPIKEY = os.getenv("TESTLINKAPIKEY")
+TESTPLANID = os.getenv("TESTPLAN_ID") or None
+BUILDID    = os.getenv("BUILD_ID") or None
+SERVER_URL = os.getenv("SERVER_URL") or None
+TESTLINKAPIKEY = os.getenv("TESTLINKAPIKEY") or None
+rr_token = os.getenv("RR_TOKEN") or None
+headers = {"Access-Token": rr_token}
+
+host        = os.getenv("HOST_API") or None
+review_id   = os.getenv("REVIEW_ID") or None
+review_path = "review"
 
 def printline():
     print('-' * 80)
@@ -22,6 +29,24 @@ else:
     printline()
 
 idfilename = "id.txt"
+
+def get_review_info(id = None):
+    if None == id or None == host or None == rr_token:
+        return (None, None)
+
+    url_review = "/".join((host, review_path, review_id))
+    data_response = requests.get((url_review, headers = headers)
+    jsondata = json.loads(data_response.text)
+
+    plan_id = None
+    build_id = None
+    try:
+        plan_id = jsondata["result"]["tl_test_plan_id"]
+        build_id = jsondata["result"]["tl_build_id"]
+        return (plan_id, build_id)
+    except Exception:
+        print("Got keyError Exception jsondata")
+        return (None, None)
 
 class TestlinkAPIClient:
     def __init__(self, devKey):
@@ -65,7 +90,12 @@ def getAllTestCaseID(execution_type=2):  # execution_type 1:手动　2:自动
     allid = {}
     docker_id = []
     lava_id = []
-    args["testplanid"] = TESTPLANID
+    if None != TESTPLANID:
+        args["testplanid"] = TESTPLANID
+    else:
+        (plan_id, build_id) = get_review_info(review_id)
+        args["testplanid"] = plan_id
+
     plantestcases = client.getTestCaseForTestPlan(args)
     if 2 == execution_type:
         print('Auto test id:')
