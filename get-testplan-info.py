@@ -35,7 +35,7 @@ def get_review_info(id = None):
         return (None, None)
 
     url_review = "/".join((host, review_path, review_id))
-    data_response = requests.get((url_review, headers=headers))
+    data_response = requests.get(url_review, headers=headers)
     jsondata = json.loads(data_response.text)
 
     plan_id = None
