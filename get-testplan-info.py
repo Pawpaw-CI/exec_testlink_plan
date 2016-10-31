@@ -74,7 +74,7 @@ class TestlinkAPIClient:
 # substitute your Dev Key Here
 client = TestlinkAPIClient(TESTLINKAPIKEY)
 
-if None == TESTPLANID or None == BUILD_ID:
+if None == TESTPLANID or None == BUILDID:
     (plan_id, build_id) = get_review_info(review_id)
     TESTPLANID = plan_id
     BUILD_ID = build_id

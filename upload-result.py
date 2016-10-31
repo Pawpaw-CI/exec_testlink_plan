@@ -101,7 +101,7 @@ host        = os.getenv("HOST_API") or None
 review_id   = os.getenv("REVIEW_ID") or None
 review_path = "review"
 
-if TESTPLANID == None or BUILD_ID == None:
+if TESTPLANID == None or BUILDID == None:
     (plan_id, build_id) = get_review_info(review_id)
     TESTPLANID = plan_id
     BUILDID = build_id
