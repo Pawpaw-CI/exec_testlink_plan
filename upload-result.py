@@ -42,6 +42,11 @@ class TestlinkAPIClient:
     def getProjects(self):
         return self.server.tl.getProjects(dict(devKey=self.devKey))
 
+    def testLinkVersion(self):
+        dictargs = {}
+        dictargs["devKey"] = self.devKey
+        return self.server.tl.testLinkVersion(dictargs)
+
     def getPlaninfo(self, dictargs):
         dictargs["devKey"] = self.devKey
         return self.server.tl.getTestPlanByName(dictargs)
@@ -82,13 +87,15 @@ def getAllTestCaseID():
 
     return allid
 
-def reportToTestlink(case_id, case_status, platform_id):
+def reportToTestlink(case_id, case_status, duration, platform_id):
     args = {}
     args["testplanid"] = TESTPLANID
     args["testcaseid"] = case_id
     # args["platformid"] = platform_id
     # args["buildname"] = "new version"
     # args["buildname"] = BUILDNAME
+    # args["notes"] = 'something'
+    args["execduration"] = duration
     args["buildid"] = BUILDID
     args["status"] = case_status
     result = client.reportToTestlink(args)
@@ -121,7 +128,7 @@ try:
 
         if not line:
             break
-        tc_id, tc_result = line.strip('\n').split()
+        tc_id, tc_result, time_duration = line.strip('\n').split()
         print(tc_id + " : " + tc_result)
 
         upload_result = ''
@@ -131,6 +138,8 @@ try:
         else:
             tc_result = 'Fail'
 
-        reportToTestlink(int(tc_id), tc_result[0].lower(), platform_desktop_id)
+        reportToTestlink(int(tc_id), tc_result[0].lower(), time_duration, platform_desktop_id)
 finally:
     ffile.close()
+
+print(client.testLinkVersion())
